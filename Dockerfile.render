@@ -25,4 +25,4 @@ ENV PYTHONUNBUFFERED=1 \
 
 EXPOSE 10000
 
-CMD ["gunicorn", "render_dashboard:app", "-k", "gthread", "--workers", "1", "--threads", "4", "--timeout", "120", "--bind", "0.0.0.0:10000"]
+CMD ["gunicorn", "render_dashboard:app", "-c", "gunicorn.conf.py"]
