@@ -1,0 +1,30 @@
+databases:
+  - name: mobilite-db
+    plan: free
+    databaseName: mobilite_durable
+    user: mobilite
+
+services:
+  - type: web
+    name: mobilite-dashboard
+    plan: free
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn render_dashboard:app -k gthread --workers 1 --threads 4 --timeout 120
+    envVars:
+      - key: PYTHONVERSION
+        value: "3.11.9"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mobilite-db
+          property: connectionString
+      - key: ENV
+        value: production
+      - key: PYTHONPATH
+        value: .
+      - key: TOMTOM_API_KEY
+        sync: false
+      - key: POWERBI_PUSH_URL_LILLE
+        sync: false
+      - key: POWERBI_PUSH_URL_MONTPELLIER
+        sync: false

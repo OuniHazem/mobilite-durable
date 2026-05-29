@@ -1,0 +1,96 @@
+# ============================================================
+# docker-compose.yml — Stack complète Mobilité Durable
+# Services : pipeline | postgres | adminer
+# Usage    : docker compose up -d
+# ============================================================
+
+services:
+
+  # ----------------------------------------------------------
+  # Pipeline principal
+  # ----------------------------------------------------------
+  pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    container_name: mobilite-pipeline
+    restart: unless-stopped
+    env_file:
+      - config/.env
+    environment:
+      DATABASE_URL: postgresql://mobilite:${POSTGRES_PASSWORD:-secret}@postgres:5432/mobilite_durable
+      ENV: production
+      HEALTH_PORT: "8080"
+      LOG_LEVEL: INFO
+    ports:
+      - "8080:8080"       # health check / métriques
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs  # logs rotatifs Loguru
+    networks:
+      - mobilite-net
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ----------------------------------------------------------
+  # PostgreSQL 16
+  # ----------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: mobilite-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mobilite_durable
+      POSTGRES_USER: mobilite
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5433:5432"       # exposé pour debug local uniquement (5433 pour éviter le conflit avec PG local)
+    networks:
+      - mobilite-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mobilite -d mobilite_durable"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ----------------------------------------------------------
+  # Adminer — UI PostgreSQL légère (dev uniquement)
+  # ----------------------------------------------------------
+  adminer:
+    image: adminer:4
+    container_name: mobilite-adminer
+    restart: unless-stopped
+    ports:
+      - "8888:8080"       # http://localhost:8888
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+      ADMINER_DESIGN: dracula
+    depends_on:
+      - postgres
+    networks:
+      - mobilite-net
+    profiles:
+      - dev              # démarré uniquement avec: docker compose --profile dev up
+
+# ----------------------------------------------------------
+# Volumes & réseaux
+# ----------------------------------------------------------
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  mobilite-net:
+    driver: bridge

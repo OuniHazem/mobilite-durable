@@ -1,0 +1,47 @@
+# ============================================================
+# DÉPENDANCES — Mobilité Durable Pipeline
+# Verrouillées pour reproductibilité — Python 3.11+
+# ============================================================
+
+# ── HTTP / Réseau ─────────────────────────────────────────────
+requests==2.32.3
+httpx==0.27.0
+urllib3==2.2.1
+tenacity==8.3.0
+
+# ── GTFS-Realtime (Protobuf) ──────────────────────────────────
+gtfs-realtime-bindings==1.0.0
+protobuf==4.25.3
+
+# ── Traitement de données ─────────────────────────────────────
+pandas==2.2.2
+pydantic==2.7.4
+pydantic-settings==2.3.4
+numpy==1.26.4
+
+# ── Scheduling ────────────────────────────────────────────────
+APScheduler==3.10.4
+tzlocal==5.2
+
+# ── Base de données ───────────────────────────────────────────
+SQLAlchemy==2.0.30
+psycopg2-binary==2.9.9
+alembic==1.13.1
+
+# ── Logging ───────────────────────────────────────────────────
+loguru==0.7.2
+
+# ── Configuration ─────────────────────────────────────────────
+python-dotenv==1.0.1
+
+# ── Auth Power BI OAuth2 (optionnel — mode prod uniquement) ───
+msal==1.29.0
+
+# ── Web / Production ──────────────────────────────────────────
+gunicorn==22.0.0
+flask==3.0.3
+
+# ── Tests ─────────────────────────────────────────────────────
+pytest==8.2.2
+pytest-mock==3.14.0
+responses==0.25.3

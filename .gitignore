@@ -1,0 +1,34 @@
+# Environnement
+.env
+config/.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Logs
+logs/
+*.log
+*.log.zip
+
+# Tests & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+.codely-cli/
+
+# Docker
+*.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
