@@ -9,6 +9,7 @@ services:
     name: mobilite-dashboard
     plan: free
     region: frankfurt
+    runtime: docker
     dockerfilePath: ./Dockerfile.render
     envVars:
       - key: PORT
