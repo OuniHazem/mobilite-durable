@@ -1,0 +1,28 @@
+# ============================================================
+# Dockerfile.render — Dashboard + Pipeline pour Render
+# Utilise Python 3.11 (contrairement au Python 3.14 par défaut)
+# ============================================================
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Dépendances système
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Dépendances Python
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Code source
+COPY . .
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app
+
+EXPOSE 10000
+
+CMD ["gunicorn", "render_dashboard:app", "-k", "gthread", "--workers", "1", "--threads", "4", "--timeout", "120", "--bind", "0.0.0.0:10000"]

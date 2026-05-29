@@ -8,11 +8,11 @@ services:
   - type: web
     name: mobilite-dashboard
     plan: free
-    runtime: python
     region: frankfurt
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn render_dashboard:app -k gthread --workers 1 --threads 4 --timeout 120
+    dockerfilePath: ./Dockerfile.render
     envVars:
+      - key: PORT
+        value: "10000"
       - key: DATABASE_URL
         fromDatabase:
           name: mobilite-db

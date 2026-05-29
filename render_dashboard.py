@@ -8,7 +8,7 @@ Combine le pipeline (scheduler) et le dashboard Flask en un seul processus :
   2. Lance le scheduler APScheduler en arrière-plan (ingestion + KPIs)
   3. Expose l'app Flask pour gunicorn
 
-Usage Render : gunicorn render_dashboard:app --bind 0.0.0.0:$PORT --workers 1
+Usage Render : gunicorn render_dashboard:app
 """
 
 from __future__ import annotations
